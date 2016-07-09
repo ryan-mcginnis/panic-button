@@ -1,5 +1,5 @@
 %% The Panic Button HR and RR estimation  
-% This script uses a frequency-domain approach to estimate hear and
+% This script uses a frequency-domain approach to estimate heart and
 % respiratory rates from iPhone video of the finger tip.  More details
 % about the method are provided here: https://experiment.com/u/BL7ghQ
 % Written by Ryan S. McGinnis - ryan.mcginis14@gmail.com - June 15, 2016
