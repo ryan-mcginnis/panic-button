@@ -64,6 +64,7 @@ clrAvgFlt = filtfilt(b,a,clrAvg);
 
 % Smooth iPPG waveform and plot
 hr_wave = smooth(score,15,'moving');
+ts = (0:length(hr_wave)-1).'/vidRate;
 
 figure;
 set(gcf,'name','iPPG waveform raw (blue) and filtered (red)');
@@ -74,9 +75,9 @@ xlabel('Time (s)'); ylabel('HR Waveform');
 
 
 % Estimate power spectrum with Welch's method and plot
-window = [];
-overlap = [];
-nfft = [];
+window = floor(2*length(hr_wave)/9); %452
+overlap = round(window/2); %221
+nfft = 2^(nextpow2(window)+2); %2048
 [pxx, freqs] = pwelch(hr_wave,window,overlap,nfft,vidRate); %pwelch with default parameter values
 
 figure;
@@ -85,6 +86,9 @@ plot(freqs,10*log10(pxx));
 ylabel('dB');
 xlabel('Frequency (Hz)');
 xlim([0, 220/60]); % set limit to physiological hr limits
+
+
+[f, pxx, mypsd_v1] = pwelch_v2(hr_wave, vidRate);
 
 
 % Calculate heart rate based on dominant frequency component
