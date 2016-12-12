@@ -19,13 +19,26 @@
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+%% Extract filenames from folder
+filenames = dir([cd, '/data']);
+filenames = filenames(3:end);
+ind = [];
+for i =1:length(filenames)
+    if ~isempty(strfind(filenames(i).name,'.mp4'))
+        ind = [ind,i];
+    end
+end
+filenames = filenames(ind);
 
 %% Load video from specified file
-filename = 'hr_vid.mp4'; % Add filename and path for video file here
+% filename = 'hr_vid.mp4'; % Add filename and path for video file here
+i=3;
+filename = fullfile(filenames(i).folder,filenames(i).name);
 vidObj = VideoReader(filename);
 vidRate = vidObj.FrameRate;
 numFrames = vidObj.NumberOfFrames;
 vidFrames = read(vidObj);
+fprintf(1,'\n%s\n',filenames(i).name);
 
 
 %% Define region of interest in video frames
@@ -52,9 +65,9 @@ clear vidFrames
 
 %% Calculate Heart Rate
 % Apply some simple filtering
-cut_off = [0.5, 12];
+cut_off = 2*[0.5, 12]/vidRate;
 n=4;
-[b,a] = butter(n,cut_off/(vidRate/2),'bandpass');
+[b,a] = butter(n,cut_off,'bandpass');
 clrAvgFlt = filtfilt(b,a,clrAvg);
 
 
@@ -87,10 +100,6 @@ ylabel('dB');
 xlabel('Frequency (Hz)');
 xlim([0, 220/60]); % set limit to physiological hr limits
 
-
-[f, pxx, mypsd_v1] = pwelch_v2(hr_wave, vidRate);
-
-
 % Calculate heart rate based on dominant frequency component
 [~,max_ind] = max(pxx);
 hr = freqs(max_ind);
@@ -121,9 +130,9 @@ end
 
 % Filter HR timeseries and plot
 fs_RR = 1/mean(diff(T));
-cut_off = [0.05, hr*0.75];
+cut_off = 2*[0.05, hr*0.75]/fs_RR;
 n=4;
-[b,a] = butter(n,cut_off/(fs_RR/2),'bandpass');
+[b,a] = butter(n,cut_off,'bandpass');
 
 HR_filt = filtfilt(b,a,HR);
 

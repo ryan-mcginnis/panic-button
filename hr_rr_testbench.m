@@ -2,7 +2,7 @@
 % Written by Ryan S. McGinnis - ryan.mcginis14@gmail.com - Sep. 24, 2016
 
 %% Load video from specified file
-filename = 'hr_vid.mp4'; % Add filename and path for video file here
+filename = 'data/EM_79bpm.mp4'; % Add filename and path for video file here
 vidObj = VideoReader(filename);
 vidRate = vidObj.FrameRate;
 numFrames = round(vidObj.Duration * vidRate);
@@ -34,3 +34,6 @@ clear vidFrames
 tic;
 [hr, rr] = hr_rr(clrAvg,vidRate);
 toc
+
+fprintf('HR: %f beats/min\n',hr); 
+fprintf('RR: %f breaths/min\n',rr); 
